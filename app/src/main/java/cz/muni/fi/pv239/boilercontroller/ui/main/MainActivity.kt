@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
         val fragment = ListFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
+//            .add(R.id.fragment_container, fragment)
+//            .add(R.id.status_bar_fragment, fragment2)
             .commit()
     }
 }

@@ -1,8 +1,10 @@
 package cz.muni.fi.pv239.boilercontroller.ui.main
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.model.TemperatureConfig
@@ -28,6 +30,12 @@ class TemperatureConfigAdapter: RecyclerView.Adapter<TemperatureConfigAdapter.Te
         notifyDataSetChanged()
     }
 
+    fun deleteTemperatureConfig(position: Int) {
+        Log.d("Delete-position", position.toString())
+        temperatureConfigs.removeAt(position)
+        notifyDataSetChanged()
+    }
+
     fun submitList(temperatureConfigs: List<TemperatureConfig>) {
         this.temperatureConfigs.clear()
         this.temperatureConfigs.addAll(temperatureConfigs)
@@ -39,6 +47,10 @@ class TemperatureConfigAdapter: RecyclerView.Adapter<TemperatureConfigAdapter.Te
         fun bind(temperatureConfig: TemperatureConfig) {
             view.temperature.text = temperatureConfig.temperature.toString()
             view.time.text = temperatureConfig.time
+
+            view.deleteTemperatureConfigButton.setOnClickListener{
+                deleteTemperatureConfig(adapterPosition)
+            }
         }
     }
 }
