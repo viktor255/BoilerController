@@ -5,10 +5,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Boost(
-    val _id: String?,
-    val author: String,
+data class BoostConfig(
     val duration: Long,
-    val temperature: Number,
-    val time: Long
+    val temperature: Int
 ) : Parcelable

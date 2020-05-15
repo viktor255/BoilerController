@@ -7,13 +7,13 @@ import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 
 class MainActivity : AppCompatActivity() {
 
-    private val prefManager: PrefManager? by lazy { PrefManager(applicationContext) }
+//    private val prefManager: PrefManager? by lazy { PrefManager(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_single_container)
 
-        prefManager?.lastAppStartDate = System.currentTimeMillis()
+//        prefManager?.lastAppStartDate = System.currentTimeMillis()
 
         val fragment = ListFragment()
         supportFragmentManager.beginTransaction()

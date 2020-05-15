@@ -1,6 +1,5 @@
 package cz.muni.fi.pv239.boilercontroller.ui.main
 
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,22 +10,45 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.extension.toPresentableDate
+import cz.muni.fi.pv239.boilercontroller.model.Boost
+import cz.muni.fi.pv239.boilercontroller.model.TemperatureConfig
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
 import cz.muni.fi.pv239.boilercontroller.ui.detail.DetailActivity
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 import kotlinx.android.synthetic.main.fragment_list.view.*
-import kotlinx.android.synthetic.main.item_temperature_config.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ListFragment : Fragment() {
 
-    private val adapter = TemperatureConfigAdapter()
+    private val adapter by lazy { context?.let { TemperatureConfigAdapter(it)} }
     private val prefManager: PrefManager? by lazy { context?.let { PrefManager(it) } }
-    private val temperatureConfigRepository by lazy { TemperatureConfigRepository() }
+    private val temperatureConfigRepository by lazy { context?.let { TemperatureConfigRepository(it)} }
+
+    private var activeBoost: Boost? = null
+    private var currentTemperatureConfigs: List<TemperatureConfig> = emptyList()
 
     companion object {
         const val REQ_TEMPERATURE_CONFIG = 1000
+    }
+
+    fun getDesiredTemperature(): Number {
+        activeBoost?.let { return it.temperature }
+
+        var desiredTempIsSet = false
+        var desiredTemp: Number = 0
+        val currentTime = SimpleDateFormat("HH:mm").format(Date())
+
+        currentTemperatureConfigs.sortedByDescending { it.time }.forEach {
+            if (it.time <= currentTime && !desiredTempIsSet) {
+                desiredTemp = it.temperature
+                desiredTempIsSet = true;
+            }
+        }
+        if (!desiredTempIsSet) {
+            desiredTemp = currentTemperatureConfigs.maxBy { it.time }?.temperature ?: 0
+        }
+        return desiredTemp
     }
 
     override fun onCreateView(
@@ -35,59 +57,59 @@ class ListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? =
         inflater.inflate(R.layout.fragment_list, container, false).apply {
-//            last_app_start_text_view.text = prefManager?.lastAppStartDate?.toPresentableDate()
-
             recycler_view.layoutManager = LinearLayoutManager(context)
 
             Timer().schedule(object : TimerTask() {
                 override fun run() {
-                    temperatureConfigRepository.getAllTemperatureConfigs { temperatureConfigs ->
-                        temperatureConfigRepository.getBoost { boost ->
-                            temperatureConfigRepository.getCurrentTemperatureConfig { temperatureConfig ->
+                    temperatureConfigRepository?.signIn("android@app.com", "dzQr*X7z-YAcz-92mxjE") { user ->
+                        user?.let {
+                            Log.d("USER", user.email)
+                            prefManager?.token = user.token
+                            prefManager?.email = user.email
+
+                            temperatureConfigRepository?.getBoostConfig {
+                                it?.let {
+                                    prefManager?.boostConfigTemperature = it.temperature
+                                    prefManager?.boostConfigDuration = it.duration
+                                    Log.d("Boost", it.toString())
+                                }
+                            }
+                        }
+                    }
+                }
+            }, 5000)
+
+            Timer().schedule(object : TimerTask() {
+                override fun run() {
+                    temperatureConfigRepository?.getAllTemperatureConfigs { temperatureConfigs ->
+                        temperatureConfigRepository?.getBoost { boost ->
+                            temperatureConfigRepository?.getCurrentTemperatureConfig { temperatureConfig ->
                                 //  Current
                                 temperatureConfig?.let {
                                     currentTempValue.text = temperatureConfig.temperature.toString()
                                     lastSyncValue.text = temperatureConfig.time.toPresentableDate()
                                 }
-                                // Current
 
                                 // temperatureConfigs
                                 temperatureConfigs?.let {
-                                    adapter.submitList(temperatureConfigs.sortedBy { it.time })
+                                    adapter?.submitList(temperatureConfigs.sortedBy { it.time })
+                                    currentTemperatureConfigs = it
                                     recycler_view.adapter = adapter
-
-                                    // desired logic
-                                    var desiredTempIsSet = false
 
                                     // Boost
                                     boost?.let {
                                         boostLayout.visibility = View.VISIBLE
                                         boostActiveTill.text = (boost.time + boost.duration * 60000).toPresentableDate()
-                                        desiredTempValue.text = boost.temperature.toString()
-                                        desiredTempIsSet = true
+                                        activeBoost = boost
                                     }
                                     if (boost == null) {
                                         boostActiveTill.text = ""
                                         boostLayout.visibility = View.GONE
-                                        desiredTempIsSet = false
+                                        activeBoost = boost
                                     }
-                                    //  Boost
 
-                                    //  calculationOfDesired if boost is not set
-                                    val currentTime = SimpleDateFormat("HH:mm").format(Date())
-                                    temperatureConfigs.sortedByDescending { it.time }.forEach {
-                                        if (it.time <= currentTime && !desiredTempIsSet) {
-                                            desiredTempValue.text = it.temperature.toString()
-//                                            Log.d("DESIRED", "setting " + it.temperature + " from time " + it.time)
-                                            desiredTempIsSet = true;
-                                        }
-                                    }
-                                    if (!desiredTempIsSet) {
-                                        desiredTempValue.text = temperatureConfigs.maxBy { it.time }?.temperature.toString()
-                                    }
-                                    // desired logic end
+                                    desiredTempValue.text = getDesiredTemperature().toString()
                                 }
-                                // temperatureConfigs end
                             }
                         }
 
@@ -111,9 +133,26 @@ class ListFragment : Fragment() {
                 startActivityForResult(DetailActivity.newIntent(context), REQ_TEMPERATURE_CONFIG)
             }
 
-//            deleteTemperatureConfigButton.setOnClickListener {
-//                Log.d("DELETE-pushed", view.toString())
-//            }
+            boost_button.setOnClickListener {
+                temperatureConfigRepository?.addBoost {
+                    it?.let {
+                        boostLayout.visibility = View.VISIBLE
+                        boostActiveTill.text = (it.time + it.duration * 60000).toPresentableDate()
+                        desiredTempValue.text = it.temperature.toString()
+                    }
+                }
+            }
+
+            deleteBoostButton.setOnClickListener {
+                activeBoost?._id?.let { id ->
+                    temperatureConfigRepository?.deleteBoost(id) {
+                        boostActiveTill.text = ""
+                        boostLayout.visibility = View.GONE
+                        activeBoost = null
+                        desiredTempValue.text = getDesiredTemperature().toString()
+                    }
+                }
+            }
         }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
