@@ -1,5 +1,7 @@
 package cz.muni.fi.pv239.boilercontroller.ui.main
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,13 +17,14 @@ import cz.muni.fi.pv239.boilercontroller.model.TemperatureConfig
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
 import cz.muni.fi.pv239.boilercontroller.ui.detail.DetailActivity
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
+import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.fragment_list.view.*
+import kotlinx.android.synthetic.main.fragment_list.view.desiredTempValue
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ListFragment : Fragment() {
-
-    private val adapter by lazy { context?.let { TemperatureConfigAdapter(it)} }
+    private val adapter by lazy { context?.let { TemperatureConfigAdapter(it, this)} }
     private val prefManager: PrefManager? by lazy { context?.let { PrefManager(it) } }
     private val temperatureConfigRepository by lazy { context?.let { TemperatureConfigRepository(it)} }
 
@@ -30,9 +33,10 @@ class ListFragment : Fragment() {
 
     companion object {
         const val REQ_TEMPERATURE_CONFIG = 1000
+        const val REQ_TEMPERATURE_CONFIG_EDIT = 1005
     }
 
-    fun getDesiredTemperature(): Number {
+    private fun getDesiredTemperature(): Number {
         activeBoost?.let { return it.temperature }
 
         var desiredTempIsSet = false
@@ -107,7 +111,6 @@ class ListFragment : Fragment() {
                                         boostLayout.visibility = View.GONE
                                         activeBoost = boost
                                     }
-
                                     desiredTempValue.text = getDesiredTemperature().toString()
                                 }
                             }
@@ -125,7 +128,7 @@ class ListFragment : Fragment() {
                         statusLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.primaryLightColor))
                     }
                 }
-            }, 1000, 3000)
+            }, 3000, 1000)
 
 
 
@@ -139,6 +142,8 @@ class ListFragment : Fragment() {
                         boostLayout.visibility = View.VISIBLE
                         boostActiveTill.text = (it.time + it.duration * 60000).toPresentableDate()
                         desiredTempValue.text = it.temperature.toString()
+                        activeBoost = it
+                        desiredTempValue.text = getDesiredTemperature().toString()
                     }
                 }
             }
@@ -155,18 +160,35 @@ class ListFragment : Fragment() {
             }
         }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        if (resultCode != Activity.RESULT_OK) return
-//
-//        when (requestCode) {
-//            REQ_TEMPERATURE_CONFIG -> {
-//                val temperatureConfig = data?.getParcelableExtra<TemperatureConfig>(DetailActivity.ARG_TEMPERATURE_CONFIG) ?: return
-//                adapter.addTemperatureConfig(temperatureConfig)
-//
-//                temperatureConfigRepository.insertTemperatureConfig(temperatureConfig)
-//            }
-//        }
-//    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode != Activity.RESULT_OK) return
+
+        when (requestCode) {
+            REQ_TEMPERATURE_CONFIG -> {
+                val temperatureConfig = data?.getParcelableExtra<TemperatureConfig>(DetailActivity.ARG_TEMPERATURE_CONFIG) ?: return
+                temperatureConfigRepository?.addTemperatureConfig(temperatureConfig) {
+                    it?.let {
+                        adapter?.addTemperatureConfig(it)
+                        currentTemperatureConfigs = adapter?.getTemperatureConfigs() ?: emptyList()
+                        desiredTempValue.text = getDesiredTemperature().toString()
+                    }
+                }
+            }
+
+            REQ_TEMPERATURE_CONFIG_EDIT -> {
+                val temperatureConfigEdit = data?.getParcelableExtra<TemperatureConfig>(DetailActivity.ARG_TEMPERATURE_CONFIG) ?: return
+                temperatureConfigRepository?.editTemperatureConfig(temperatureConfigEdit) {
+                    it?.let {
+                        adapter?.editTemperatureConfig(it)
+//                        setDesiredTemperature()
+                        currentTemperatureConfigs = adapter?.getTemperatureConfigs() ?: emptyList()
+                        Log.d("DESIRED-temp", getDesiredTemperature().toString())
+                        desiredTempValue.text = getDesiredTemperature().toString()
+                    }
+                }
+            }
+        }
+    }
 }

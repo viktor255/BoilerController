@@ -1,14 +1,8 @@
 <resources>
     <string name="app_name">BoilerController</string>
 
-    <string name="title">Nadpis</string>
-    <string name="category">Kategorie</string>
-    <string name="users">Uživatelé</string>
-    <string name="save_note">Save note</string>
-    <string name="choose_date">Save note</string>
-    <string name="date">Datum</string>
-    <string name="add">Přidat</string>
-    <string name="add_photo">Přidat fotku</string>
-    <string name="last_sign_in">Poslední přihlášení: %s</string>
+    <string name="temperature">Temperature</string>
+    <string name="time">Time</string>
+    <string name="save">Save</string>
 
 </resources>

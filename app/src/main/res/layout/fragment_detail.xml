@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,35 +10,64 @@
         android:id="@+id/title_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/title" />
+        android:text="@string/temperature"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/title_edit_text"
+    <!--    <TextView-->
+    <!--        android:id="@+id/temperature_config_temperature_input"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_margin="8dp"-->
+    <!--        android:gravity="center" />-->
+
+    <!--    <EditText-->
+    <!--        android:id="@+id/temperature_config_temperature_input"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_margin="8dp"-->
+    <!--        android:inputType="numberDecimal"-->
+    <!--        android:autofillHints="Temperature" />-->
+
+    <NumberPicker
+        android:id="@+id/numberpicker_main_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view" />
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/date" />
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:text="@string/time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/numberpicker_main_picker" />
 
     <TextView
-        android:id="@+id/date_text_view"
+        android:id="@+id/temperature_config_time_input"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
         android:foreground="?attr/selectableItemBackground"
+        android:gravity="center"
         android:padding="4dp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:textColor="@android:color/black"
         android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         tools:text="12. 12. 2012" />
 
     <Button
@@ -46,7 +76,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:text="@string/save_note" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/temperature_config_time_input" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
