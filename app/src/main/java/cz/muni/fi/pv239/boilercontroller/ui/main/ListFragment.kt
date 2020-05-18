@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.extension.toPresentableDate
 import cz.muni.fi.pv239.boilercontroller.model.Boost
+import cz.muni.fi.pv239.boilercontroller.model.CurrentTemperatureConfig
 import cz.muni.fi.pv239.boilercontroller.model.TemperatureConfig
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
 import cz.muni.fi.pv239.boilercontroller.ui.detail.DetailActivity
@@ -29,6 +30,7 @@ class ListFragment : Fragment() {
     private val temperatureConfigRepository by lazy { context?.let { TemperatureConfigRepository(it)} }
 
     private var activeBoost: Boost? = null
+    private var currentTemperatureConfigStatus: CurrentTemperatureConfig? = null
     private var currentTemperatureConfigs: List<TemperatureConfig> = emptyList()
 
     companion object {
@@ -90,8 +92,9 @@ class ListFragment : Fragment() {
                             temperatureConfigRepository?.getCurrentTemperatureConfig { temperatureConfig ->
                                 //  Current
                                 temperatureConfig?.let {
-                                    currentTempValue.text = temperatureConfig.temperature.toString()
-                                    lastSyncValue.text = temperatureConfig.time.toPresentableDate()
+                                    currentTemperatureConfigStatus = it
+                                    currentTempValue.text = it.temperature.toString()
+                                    lastSyncValue.text = it.time.toPresentableDate()
                                 }
 
                                 // temperatureConfigs
@@ -122,8 +125,14 @@ class ListFragment : Fragment() {
 
             Timer().schedule(object : TimerTask() {
                 override fun run() {
-                    if(currentTempValue.text != desiredTempValue.text) {
-                        statusLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.complementaryColor))
+                    val currentDate = System.currentTimeMillis()
+                    if(currentTemperatureConfigStatus?.time != null) {
+                        if(currentTempValue.text != desiredTempValue.text ||
+                            (currentDate - currentTemperatureConfigStatus!!.time) > 300000) {
+                            statusLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.complementaryColor))
+                        } else {
+                            statusLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.primaryLightColor))
+                        }
                     } else {
                         statusLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.primaryLightColor))
                     }
@@ -182,7 +191,6 @@ class ListFragment : Fragment() {
                 temperatureConfigRepository?.editTemperatureConfig(temperatureConfigEdit) {
                     it?.let {
                         adapter?.editTemperatureConfig(it)
-//                        setDesiredTemperature()
                         currentTemperatureConfigs = adapter?.getTemperatureConfigs() ?: emptyList()
                         Log.d("DESIRED-temp", getDesiredTemperature().toString())
                         desiredTempValue.text = getDesiredTemperature().toString()
