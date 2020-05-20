@@ -1,6 +1,7 @@
 package cz.muni.fi.pv239.boilercontroller.repository
 
 import android.content.Context
+import android.util.Log
 import cz.muni.fi.pv239.boilercontroller.model.*
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 import cz.muni.fi.pv239.boilercontroller.webservice.RetrofitUtil
@@ -9,6 +10,8 @@ import cz.muni.fi.pv239.boilercontroller.webservice.response.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDateTime
+import java.util.*
 
 class TemperatureConfigRepository(context: Context) {
 
@@ -22,6 +25,7 @@ class TemperatureConfigRepository(context: Context) {
                     callback.invoke(null)
                     t.printStackTrace()
                 }
+
                 override fun onResponse(
                     call: Call<TemperatureConfigsResponse>,
                     response: Response<TemperatureConfigsResponse>
@@ -41,6 +45,7 @@ class TemperatureConfigRepository(context: Context) {
                     callback.invoke(null)
                     t.printStackTrace()
                 }
+
                 override fun onResponse(
                     call: Call<CurrentTemperatureConfigResponse>,
                     response: Response<CurrentTemperatureConfigResponse>
@@ -59,6 +64,7 @@ class TemperatureConfigRepository(context: Context) {
                 callback.invoke(null)
                 t.printStackTrace()
             }
+
             override fun onResponse(
                 call: Call<BoostResponse>,
                 response: Response<BoostResponse>
@@ -79,6 +85,29 @@ class TemperatureConfigRepository(context: Context) {
                         callback.invoke(null)
                         t.printStackTrace()
                     }
+
+                    override fun onResponse(
+                        call: Call<BoostConfigResponse>,
+                        response: Response<BoostConfigResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            val boost = response.body()?.obj
+                            callback.invoke(boost)
+                        }
+                    }
+                })
+        }
+    }
+
+    fun updateBoostConfig(boostConfig: BoostConfig, callback: (BoostConfig?) -> Unit) {
+        prefManager.token?.let { token ->
+            temperatureWebservice.editBoostConfig(boostConfig, boostConfig._id, token)
+                .enqueue(object : Callback<BoostConfigResponse> {
+                    override fun onFailure(call: Call<BoostConfigResponse>, t: Throwable) {
+                        callback.invoke(null)
+                        t.printStackTrace()
+                    }
+
                     override fun onResponse(
                         call: Call<BoostConfigResponse>,
                         response: Response<BoostConfigResponse>
@@ -97,7 +126,7 @@ class TemperatureConfigRepository(context: Context) {
             prefManager.email?.let { email ->
                 val temp = prefManager.boostConfigTemperature
                 val duration = prefManager.boostConfigDuration
-                val time: Long = duration * 60000 + System.currentTimeMillis()
+                val time: Long = Date().time
                 val newBoost = Boost(null, email, duration, temp, time)
 
                 temperatureWebservice.addBoost(newBoost, token)
@@ -106,6 +135,7 @@ class TemperatureConfigRepository(context: Context) {
                             callback.invoke(null)
                             t.printStackTrace()
                         }
+
                         override fun onResponse(
                             call: Call<BoostResponse>,
                             response: Response<BoostResponse>
@@ -128,6 +158,7 @@ class TemperatureConfigRepository(context: Context) {
                         callback.invoke(null)
                         t.printStackTrace()
                     }
+
                     override fun onResponse(
                         call: Call<BoostResponse>,
                         response: Response<BoostResponse>
@@ -141,7 +172,10 @@ class TemperatureConfigRepository(context: Context) {
         }
     }
 
-    fun addTemperatureConfig(temperatureConfig: TemperatureConfig, callback: (TemperatureConfig?) -> Unit) {
+    fun addTemperatureConfig(
+        temperatureConfig: TemperatureConfig,
+        callback: (TemperatureConfig?) -> Unit
+    ) {
         prefManager.token?.let { token ->
             temperatureWebservice.addTemperatureConfig(temperatureConfig, token)
                 .enqueue(object : Callback<TemperatureConfigResponse> {
@@ -149,6 +183,7 @@ class TemperatureConfigRepository(context: Context) {
                         callback.invoke(null)
                         t.printStackTrace()
                     }
+
                     override fun onResponse(
                         call: Call<TemperatureConfigResponse>,
                         response: Response<TemperatureConfigResponse>
@@ -162,14 +197,22 @@ class TemperatureConfigRepository(context: Context) {
         }
     }
 
-    fun editTemperatureConfig(temperatureConfig: TemperatureConfig, callback: (TemperatureConfig?) -> Unit) {
+    fun editTemperatureConfig(
+        temperatureConfig: TemperatureConfig,
+        callback: (TemperatureConfig?) -> Unit
+    ) {
         prefManager.token?.let { token ->
-            temperatureWebservice.editTemperatureConfig(temperatureConfig, temperatureConfig._id, token)
+            temperatureWebservice.editTemperatureConfig(
+                temperatureConfig,
+                temperatureConfig._id,
+                token
+            )
                 .enqueue(object : Callback<TemperatureConfigResponse> {
                     override fun onFailure(call: Call<TemperatureConfigResponse>, t: Throwable) {
                         callback.invoke(null)
                         t.printStackTrace()
                     }
+
                     override fun onResponse(
                         call: Call<TemperatureConfigResponse>,
                         response: Response<TemperatureConfigResponse>
@@ -185,12 +228,14 @@ class TemperatureConfigRepository(context: Context) {
 
     fun signIn(email: String, password: String, callback: (User?) -> Unit) {
         val req = createJsonRequestBody(
-            "email" to email, "password" to password)
-        temperatureWebservice.jsonLogin(req).enqueue(object: Callback<User> {
+            "email" to email, "password" to password
+        )
+        temperatureWebservice.jsonLogin(req).enqueue(object : Callback<User> {
             override fun onFailure(call: Call<User>, t: Throwable) {
                 callback.invoke(null)
                 t.printStackTrace()
             }
+
             override fun onResponse(
                 call: Call<User>,
                 response: Response<User>
@@ -211,6 +256,7 @@ class TemperatureConfigRepository(context: Context) {
                         callback.invoke(null)
                         t.printStackTrace()
                     }
+
                     override fun onResponse(
                         call: Call<TemperatureConfigResponse>,
                         response: Response<TemperatureConfigResponse>

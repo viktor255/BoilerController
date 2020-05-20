@@ -6,6 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class BoostConfig(
+    val _id: String,
     val duration: Long,
     val temperature: Int
 ) : Parcelable

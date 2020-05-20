@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        android:hint="Enter number between 1-6"
+        app:dialogTitle="@string/boostTemperature"
+        app:key="boostTemperature"
+        app:title="@string/boostTemperature"
+        app:useSimpleSummaryProvider="true" />
+
+    <EditTextPreference
+        app:dialogTitle="@string/minutes"
+        app:key="boostDuration"
+        app:title="@string/boostDuration"
+        app:useSimpleSummaryProvider="true" />
+
+</PreferenceScreen>

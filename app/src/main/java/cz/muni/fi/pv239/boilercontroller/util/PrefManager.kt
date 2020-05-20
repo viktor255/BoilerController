@@ -10,6 +10,7 @@ class PrefManager(context: Context) {
 
         private const val USER_EMAIL = "user_email"
         private const val AUTH_TOKEN = "auth_token"
+        private const val BOOST_CONFIG_ID = "boost_config_id"
         private const val BOOST_CONFIG_TEMPERATURE = "boost_config_temperature"
         private const val BOOST_CONFIG_DURATION = "boost_config_duration"
     }
@@ -24,6 +25,10 @@ class PrefManager(context: Context) {
     var token: String?
         get() = shared.getString(AUTH_TOKEN, "")
         set(value) = shared.edit().putString(AUTH_TOKEN, value).apply()
+
+    var boostConfigId: String?
+        get() = shared.getString(BOOST_CONFIG_ID, "")
+        set(value) = shared.edit().putString(BOOST_CONFIG_ID, value).apply()
 
     var boostConfigTemperature: Int
         get() = shared.getInt(BOOST_CONFIG_TEMPERATURE, 0)

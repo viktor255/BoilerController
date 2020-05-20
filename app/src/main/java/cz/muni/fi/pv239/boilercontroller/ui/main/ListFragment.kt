@@ -77,7 +77,8 @@ class ListFragment : Fragment() {
                                 it?.let {
                                     prefManager?.boostConfigTemperature = it.temperature
                                     prefManager?.boostConfigDuration = it.duration
-                                    Log.d("Boost", it.toString())
+                                    prefManager?.boostConfigId = it._id
+                                    Log.d("Boost-get1", it.toString())
                                 }
                             }
                         }

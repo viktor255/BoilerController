@@ -1,6 +1,7 @@
 package cz.muni.fi.pv239.boilercontroller.webservice
 
 import cz.muni.fi.pv239.boilercontroller.model.Boost
+import cz.muni.fi.pv239.boilercontroller.model.BoostConfig
 import cz.muni.fi.pv239.boilercontroller.model.TemperatureConfig
 import cz.muni.fi.pv239.boilercontroller.model.User
 import cz.muni.fi.pv239.boilercontroller.webservice.response.*
@@ -30,6 +31,9 @@ interface TemperatureConfigWebservice {
 
     @GET("/boostConfig/api")
     fun getBoostConfig(@Query("token") token: String): Call<BoostConfigResponse>
+
+    @PATCH("/boostConfig/api/{id}")
+    fun editBoostConfig(@Body temperatureConfig: BoostConfig, @Path("id") id: String?,  @Query("token") token: String): Call<BoostConfigResponse>
 
     @POST("/boost")
     fun addBoost(@Body boost: Boost, @Query("token") token: String): Call<BoostResponse>

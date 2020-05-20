@@ -13,6 +13,7 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".ui.detail.DetailActivity" />
+        <activity android:name=".ui.settings.SettingsActivity" />
 
         <activity android:name="cz.muni.fi.pv239.boilercontroller.ui.main.MainActivity">
             <intent-filter>
