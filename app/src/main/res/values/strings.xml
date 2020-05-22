@@ -1,10 +1,9 @@
 <resources>
-    <string name="app_name">BoilerController</string>
+    <string name="app_name">Boiler Controller</string>
 
     <string name="temperature">Temperature</string>
     <string name="time">Time</string>
     <string name="save">Save</string>
-
     <string name="login">Login</string>
     <string name="email">Email</string>
     <string name="password">Password</string>

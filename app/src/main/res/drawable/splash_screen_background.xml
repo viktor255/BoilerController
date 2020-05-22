@@ -2,14 +2,11 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:opacity="opaque">
 
-    <!-- The background color, preferably the same as your normal theme -->
     <item android:drawable="@color/primaryTextColor" />
-
     <item
         android:width="150dp"
         android:height="150dp"
-        android:drawable="@drawable/ic_whatshot_splash"
+        android:drawable="@mipmap/ic_whatshot_foreground"
         android:gravity="center" />
-
 
 </layer-list>
