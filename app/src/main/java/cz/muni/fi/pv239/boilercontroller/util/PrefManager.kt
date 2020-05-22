@@ -9,6 +9,7 @@ class PrefManager(context: Context) {
         private const val PREF_NAME = "prefs_boiler_controller"
 
         private const val USER_EMAIL = "user_email"
+        private const val USER_PASSWORD = "user_password"
         private const val AUTH_TOKEN = "auth_token"
         private const val BOOST_CONFIG_ID = "boost_config_id"
         private const val BOOST_CONFIG_TEMPERATURE = "boost_config_temperature"
@@ -19,8 +20,12 @@ class PrefManager(context: Context) {
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
     var email: String?
-        get() = shared.getString(USER_EMAIL, "")
+        get() = shared.getString(USER_EMAIL, null)
         set(value) = shared.edit().putString(USER_EMAIL, value).apply()
+
+    var password: String?
+        get() = shared.getString(USER_PASSWORD, null)
+        set(value) = shared.edit().putString(USER_PASSWORD, value).apply()
 
     var token: String?
         get() = shared.getString(AUTH_TOKEN, "")

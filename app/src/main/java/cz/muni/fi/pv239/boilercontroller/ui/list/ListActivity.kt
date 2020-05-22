@@ -9,7 +9,10 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import cz.muni.fi.pv239.boilercontroller.R
+import cz.muni.fi.pv239.boilercontroller.ui.login.LoginActivity
 import cz.muni.fi.pv239.boilercontroller.ui.settings.SettingsActivity
+import cz.muni.fi.pv239.boilercontroller.ui.splash.SplashActivity
+import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 
 class ListActivity : AppCompatActivity() {
 
@@ -17,14 +20,24 @@ class ListActivity : AppCompatActivity() {
         fun newIntent(context: Context) = Intent(context, ListActivity::class.java)
     }
 
+    private val prefManager: PrefManager? by lazy { PrefManager(this) }
+
+    private fun logout() {
+        prefManager?.email = null
+        prefManager?.password = null
+        prefManager?.token = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_single_container)
 
-        val fragment = ListFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
+        if (savedInstanceState == null) {
+            val fragment = ListFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -37,7 +50,12 @@ class ListActivity : AppCompatActivity() {
         // Handle item selection
         return when (item.itemId) {
             R.id.settings -> {
-                startActivity(SettingsActivity.newIntent(this))//
+                startActivity(SettingsActivity.newIntent(this))
+                true
+            }
+            R.id.logout -> {
+                logout()
+                startActivity(LoginActivity.newIntent(this))
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -16,21 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--    <TextView-->
-    <!--        android:id="@+id/temperature_config_temperature_input"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_margin="8dp"-->
-    <!--        android:gravity="center" />-->
-
-    <!--    <EditText-->
-    <!--        android:id="@+id/temperature_config_temperature_input"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_margin="8dp"-->
-    <!--        android:inputType="numberDecimal"-->
-    <!--        android:autofillHints="Temperature" />-->
-
     <NumberPicker
         android:id="@+id/numberpicker_main_picker"
         android:layout_width="match_parent"

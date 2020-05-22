@@ -15,6 +15,7 @@
         <activity android:name=".ui.detail.DetailActivity" />
         <activity android:name=".ui.settings.SettingsActivity" />
         <activity android:name="cz.muni.fi.pv239.boilercontroller.ui.list.ListActivity" />
+        <activity android:name="cz.muni.fi.pv239.boilercontroller.ui.login.LoginActivity" />
 
         <activity android:name="cz.muni.fi.pv239.boilercontroller.ui.splash.SplashActivity"
             android:theme="@style/AppTheme.Launcher">
