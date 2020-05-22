@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.extension.toPresentableDate
 import cz.muni.fi.pv239.boilercontroller.model.Boost
@@ -21,22 +22,26 @@ import cz.muni.fi.pv239.boilercontroller.ui.detail.DetailActivity
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.fragment_list.view.*
-import kotlinx.android.synthetic.main.fragment_list.view.desiredTempValue
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainFragment(context: Context) : Fragment() {
-    private val adapter by lazy { TemperatureConfigAdapter(context, this) }
-    private val prefManager: PrefManager? by lazy { PrefManager(context) }
-    private val temperatureConfigRepository by lazy { TemperatureConfigRepository(context) }
+
+class MainFragment(context: Context? = null) : Fragment() {
+    private val adapter by lazy { context?.let { TemperatureConfigAdapter(it, this) } }
+    private val prefManager: PrefManager? by lazy { context?.let { PrefManager(it) } }
+    private val temperatureConfigRepository by lazy { context?.let { TemperatureConfigRepository(it) } }
     private var activeBoost: Boost? = null
     private var currentTemperatureConfigStatus: CurrentTemperatureConfig? = null
     private var currentTemperatureConfigs: List<TemperatureConfig> = emptyList()
+
+    private var timer1: Timer = Timer()
+    private var timer2: Timer = Timer()
 
     companion object {
         const val REQ_TEMPERATURE_CONFIG = 1000
         const val REQ_TEMPERATURE_CONFIG_EDIT = 1005
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,12 +50,13 @@ class MainFragment(context: Context) : Fragment() {
     ): View? =
         inflater.inflate(R.layout.fragment_list, container, false).apply {
             recycler_view.layoutManager = LinearLayoutManager(context)
+            recycler_view.adapter = adapter
 
             getBoostConfig()
             getAllTemperatureConfigs()
             setUpdateCurrentTemperatureAndBoostTimer()
 
-            Timer().schedule(object : TimerTask() {
+            timer1.schedule(object : TimerTask() {
                 override fun run() {
                     updateStatusBar()
                 }
@@ -70,6 +76,12 @@ class MainFragment(context: Context) : Fragment() {
             }
         }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        timer1.cancel()
+        timer2.cancel()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -79,11 +91,11 @@ class MainFragment(context: Context) : Fragment() {
             REQ_TEMPERATURE_CONFIG -> {
                 val temperatureConfig =
                     data?.getParcelableExtra<TemperatureConfig>(DetailActivity.ARG_TEMPERATURE_CONFIG) ?: return
-                temperatureConfigRepository.addTemperatureConfig(temperatureConfig) {
+                temperatureConfigRepository?.addTemperatureConfig(temperatureConfig) {
                     it?.let {
-                        adapter.addTemperatureConfig(it)
-                        currentTemperatureConfigs = adapter.getTemperatureConfigs() ?: emptyList()
-                        desiredTempValue.text = getDesiredTemperature().toString()
+                        adapter?.addTemperatureConfig(it)
+                        currentTemperatureConfigs = adapter?.getTemperatureConfigs() ?: emptyList()
+                        desiredTempValue?.text = getDesiredTemperature().toString()
                     }
                 }
             }
@@ -91,12 +103,12 @@ class MainFragment(context: Context) : Fragment() {
             REQ_TEMPERATURE_CONFIG_EDIT -> {
                 val temperatureConfigEdit =
                     data?.getParcelableExtra<TemperatureConfig>(DetailActivity.ARG_TEMPERATURE_CONFIG) ?: return
-                temperatureConfigRepository.editTemperatureConfig(temperatureConfigEdit) {
+                temperatureConfigRepository?.editTemperatureConfig(temperatureConfigEdit) {
                     it?.let {
-                        adapter.editTemperatureConfig(it)
-                        currentTemperatureConfigs = adapter.getTemperatureConfigs() ?: emptyList()
+                        adapter?.editTemperatureConfig(it)
+                        currentTemperatureConfigs = adapter?.getTemperatureConfigs() ?: emptyList()
                         Log.d("DESIRED-temp", getDesiredTemperature().toString())
-                        desiredTempValue.text = getDesiredTemperature().toString()
+                        desiredTempValue?.text = getDesiredTemperature().toString()
                     }
                 }
             }
@@ -104,7 +116,7 @@ class MainFragment(context: Context) : Fragment() {
     }
 
     private fun setUpdateCurrentTemperatureAndBoostTimer() {
-        Timer().schedule(object : TimerTask() {
+        timer2.schedule(object : TimerTask() {
             override fun run() {
                 getCurrentTemperatureAndBoost()
             }
@@ -112,24 +124,25 @@ class MainFragment(context: Context) : Fragment() {
     }
 
     private fun addBoost() {
-        temperatureConfigRepository.addBoost {
+        temperatureConfigRepository?.addBoost {
             it?.let {
-                boostLayout.visibility = View.VISIBLE
-                boostActiveTill.text = (it.time + it.duration * 60000).toPresentableDate()
-                desiredTempValue.text = it.temperature.toString()
+                boostLayout?.visibility = View.VISIBLE
+                boostActiveTill?.text = (it.time + it.duration * 60000).toPresentableDate()
+                boostAuthor?.text = it.author
                 activeBoost = it
-                desiredTempValue.text = getDesiredTemperature().toString()
+                desiredTempValue?.text = getDesiredTemperature().toString()
             }
         }
     }
 
     private fun deleteBoost() {
         activeBoost?._id?.let { id ->
-            temperatureConfigRepository.deleteBoost(id) {
-                boostActiveTill.text = ""
-                boostLayout.visibility = View.GONE
+            temperatureConfigRepository?.deleteBoost(id) {
+                boostActiveTill?.text = ""
+                boostLayout?.visibility = View.GONE
+                boostAuthor?.text = ""
                 activeBoost = null
-                desiredTempValue.text = getDesiredTemperature().toString()
+                desiredTempValue?.text = getDesiredTemperature().toString()
             }
         }
     }
@@ -155,7 +168,7 @@ class MainFragment(context: Context) : Fragment() {
     }
 
     private fun getBoostConfig() {
-        temperatureConfigRepository.getBoostConfig {
+        temperatureConfigRepository?.getBoostConfig {
             it?.let {
                 prefManager?.boostConfigTemperature = it.temperature
                 prefManager?.boostConfigDuration = it.duration
@@ -170,19 +183,19 @@ class MainFragment(context: Context) : Fragment() {
             if (currentTempValue.text != desiredTempValue.text ||
                 (currentDate - currentTemperatureConfigStatus!!.time) > 300000
             ) {
-                statusLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.complementaryColor))
+                statusLayout?.setBackgroundColor(ContextCompat.getColor(context, R.color.complementaryColor))
             } else {
-                statusLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.primaryLightColor))
+                statusLayout?.setBackgroundColor(ContextCompat.getColor(context, R.color.primaryLightColor))
             }
         } else {
-            statusLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.primaryLightColor))
+            statusLayout?.setBackgroundColor(ContextCompat.getColor(context, R.color.primaryLightColor))
         }
     }
 
     private fun getAllTemperatureConfigs() {
-        temperatureConfigRepository.getAllTemperatureConfigs { temperatureConfigs ->
+        temperatureConfigRepository?.getAllTemperatureConfigs { temperatureConfigs ->
             temperatureConfigs?.let { it ->
-                adapter.submitList(it.sortedBy { it.time })
+                adapter?.submitList(it.sortedBy { it.time })
                 currentTemperatureConfigs = it
                 recycler_view.adapter = adapter
             }
@@ -190,29 +203,29 @@ class MainFragment(context: Context) : Fragment() {
     }
 
     private fun getCurrentTemperatureAndBoost() {
-        temperatureConfigRepository.getBoost { boost ->
-            temperatureConfigRepository.getCurrentTemperatureConfig { temperatureConfig ->
+        temperatureConfigRepository?.getBoost { boost ->
+            temperatureConfigRepository?.getCurrentTemperatureConfig { temperatureConfig ->
                 //  Current
                 temperatureConfig?.let {
                     currentTemperatureConfigStatus = it
-                    currentTempValue.text = it.temperature.toString()
-                    lastSyncValue.text = it.time.toPresentableDate()
+                    currentTempValue?.text = it.temperature.toString()
+                    lastSyncValue?.text = it.time.toPresentableDate()
                 }
 
                 // Boost
                 boost?.let { boost ->
-                    boostLayout.visibility = View.VISIBLE
-                    boostActiveTill.text = (boost.time + boost.duration * 60000).toPresentableDate()
-                    boostAuthor.text = boost.author
+                    boostLayout?.visibility = View.VISIBLE
+                    boostActiveTill?.text = (boost.time + boost.duration * 60000).toPresentableDate()
+                    boostAuthor?.text = boost.author
                     activeBoost = boost
                 }
                 if (boost == null) {
-                    boostActiveTill.text = ""
-                    boostAuthor.text = ""
-                    boostLayout.visibility = View.GONE
+                    boostActiveTill?.text = ""
+                    boostAuthor?.text = ""
+                    boostLayout?.visibility = View.GONE
                     activeBoost = boost
                 }
-                desiredTempValue.text = getDesiredTemperature().toString()
+                desiredTempValue?.text = getDesiredTemperature().toString()
             }
         }
     }
