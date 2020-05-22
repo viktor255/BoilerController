@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
-import cz.muni.fi.pv239.boilercontroller.ui.list.ListActivity
+import cz.muni.fi.pv239.boilercontroller.ui.main.MainActivity
 import cz.muni.fi.pv239.boilercontroller.ui.login.LoginActivity
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 
@@ -45,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun routeToAppropriatePage(isLoggedIn: Boolean) {
         if (isLoggedIn) {
-            startActivity(ListActivity.newIntent(this))
+            startActivity(MainActivity.newIntent(this))
         } else {
             startActivity(LoginActivity.newIntent(this))
         }

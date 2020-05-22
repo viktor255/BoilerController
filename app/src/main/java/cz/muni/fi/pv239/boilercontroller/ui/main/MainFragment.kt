@@ -1,6 +1,7 @@
-package cz.muni.fi.pv239.boilercontroller.ui.list
+package cz.muni.fi.pv239.boilercontroller.ui.main
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -24,10 +25,10 @@ import kotlinx.android.synthetic.main.fragment_list.view.desiredTempValue
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ListFragment : Fragment() {
-    private val adapter by lazy { context?.let { TemperatureConfigAdapter(it, this) } }
-    private val prefManager: PrefManager? by lazy { context?.let { PrefManager(it) } }
-    private val temperatureConfigRepository by lazy { context?.let { TemperatureConfigRepository(it) } }
+class MainFragment(context: Context) : Fragment() {
+    private val adapter by lazy { TemperatureConfigAdapter(context, this) }
+    private val prefManager: PrefManager? by lazy { PrefManager(context) }
+    private val temperatureConfigRepository by lazy { TemperatureConfigRepository(context) }
     private var activeBoost: Boost? = null
     private var currentTemperatureConfigStatus: CurrentTemperatureConfig? = null
     private var currentTemperatureConfigs: List<TemperatureConfig> = emptyList()
@@ -47,17 +48,17 @@ class ListFragment : Fragment() {
 
             getBoostConfig()
 
-//            Timer().schedule(object : TimerTask() {
-//                override fun run() {
-//                    getTemperatureConfigurations()
-//                }
-//            }, 0, 10000)
-//
-//            Timer().schedule(object : TimerTask() {
-//                override fun run() {
-//                    updateStatusBar()
-//                }
-//            }, 3000, 1000)
+            Timer().schedule(object : TimerTask() {
+                override fun run() {
+                    getTemperatureConfigurations()
+                }
+            }, 0, 10000)
+
+            Timer().schedule(object : TimerTask() {
+                override fun run() {
+                    updateStatusBar()
+                }
+            }, 3000, 1000)
 
 
             add_button.setOnClickListener {
@@ -82,10 +83,10 @@ class ListFragment : Fragment() {
             REQ_TEMPERATURE_CONFIG -> {
                 val temperatureConfig =
                     data?.getParcelableExtra<TemperatureConfig>(DetailActivity.ARG_TEMPERATURE_CONFIG) ?: return
-                temperatureConfigRepository?.addTemperatureConfig(temperatureConfig) {
+                temperatureConfigRepository.addTemperatureConfig(temperatureConfig) {
                     it?.let {
-                        adapter?.addTemperatureConfig(it)
-                        currentTemperatureConfigs = adapter?.getTemperatureConfigs() ?: emptyList()
+                        adapter.addTemperatureConfig(it)
+                        currentTemperatureConfigs = adapter.getTemperatureConfigs() ?: emptyList()
                         desiredTempValue.text = getDesiredTemperature().toString()
                     }
                 }
@@ -94,10 +95,10 @@ class ListFragment : Fragment() {
             REQ_TEMPERATURE_CONFIG_EDIT -> {
                 val temperatureConfigEdit =
                     data?.getParcelableExtra<TemperatureConfig>(DetailActivity.ARG_TEMPERATURE_CONFIG) ?: return
-                temperatureConfigRepository?.editTemperatureConfig(temperatureConfigEdit) {
+                temperatureConfigRepository.editTemperatureConfig(temperatureConfigEdit) {
                     it?.let {
-                        adapter?.editTemperatureConfig(it)
-                        currentTemperatureConfigs = adapter?.getTemperatureConfigs() ?: emptyList()
+                        adapter.editTemperatureConfig(it)
+                        currentTemperatureConfigs = adapter.getTemperatureConfigs() ?: emptyList()
                         Log.d("DESIRED-temp", getDesiredTemperature().toString())
                         desiredTempValue.text = getDesiredTemperature().toString()
                     }
@@ -107,7 +108,7 @@ class ListFragment : Fragment() {
     }
 
     private fun addBoost() {
-        temperatureConfigRepository?.addBoost {
+        temperatureConfigRepository.addBoost {
             it?.let {
                 boostLayout.visibility = View.VISIBLE
                 boostActiveTill.text = (it.time + it.duration * 60000).toPresentableDate()
@@ -120,7 +121,7 @@ class ListFragment : Fragment() {
 
     private fun deleteBoost() {
         activeBoost?._id?.let { id ->
-            temperatureConfigRepository?.deleteBoost(id) {
+            temperatureConfigRepository.deleteBoost(id) {
                 boostActiveTill.text = ""
                 boostLayout.visibility = View.GONE
                 activeBoost = null
@@ -150,7 +151,7 @@ class ListFragment : Fragment() {
     }
 
     private fun getBoostConfig() {
-        temperatureConfigRepository?.getBoostConfig {
+        temperatureConfigRepository.getBoostConfig {
             it?.let {
                 prefManager?.boostConfigTemperature = it.temperature
                 prefManager?.boostConfigDuration = it.duration
@@ -175,9 +176,9 @@ class ListFragment : Fragment() {
     }
 
     private fun getTemperatureConfigurations() {
-        temperatureConfigRepository?.getAllTemperatureConfigs { temperatureConfigs ->
-            temperatureConfigRepository?.getBoost { boost ->
-                temperatureConfigRepository?.getCurrentTemperatureConfig { temperatureConfig ->
+        temperatureConfigRepository.getAllTemperatureConfigs { temperatureConfigs ->
+            temperatureConfigRepository.getBoost { boost ->
+                temperatureConfigRepository.getCurrentTemperatureConfig { temperatureConfig ->
                     //  Current
                     temperatureConfig?.let {
                         currentTemperatureConfigStatus = it
@@ -186,13 +187,13 @@ class ListFragment : Fragment() {
                     }
 
                     // temperatureConfigs
-                    temperatureConfigs?.let {
-                        adapter?.submitList(temperatureConfigs.sortedBy { it.time })
-                        currentTemperatureConfigs = it
+                    temperatureConfigs?.let { temperatureConfigs ->
+                        adapter.submitList(temperatureConfigs.sortedBy { it.time })
+                        currentTemperatureConfigs = temperatureConfigs
                         recycler_view.adapter = adapter
 
                         // Boost
-                        boost?.let {
+                        boost?.let { boost ->
                             boostLayout.visibility = View.VISIBLE
                             boostActiveTill.text = (boost.time + boost.duration * 60000).toPresentableDate()
                             boostAuthor.text = boost.author

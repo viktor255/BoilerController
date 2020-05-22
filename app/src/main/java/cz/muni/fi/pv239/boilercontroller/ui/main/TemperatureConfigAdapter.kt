@@ -1,4 +1,4 @@
-package cz.muni.fi.pv239.boilercontroller.ui.list
+package cz.muni.fi.pv239.boilercontroller.ui.main
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
 import cz.muni.fi.pv239.boilercontroller.ui.detail.DetailActivity
 import kotlinx.android.synthetic.main.item_temperature_config.view.*
 
-class TemperatureConfigAdapter(private val context: Context, private val fragment: ListFragment): RecyclerView.Adapter<TemperatureConfigAdapter.TemperatureConfigViewHolder>() {
+class TemperatureConfigAdapter(private val context: Context, private val fragment: MainFragment): RecyclerView.Adapter<TemperatureConfigAdapter.TemperatureConfigViewHolder>() {
 
     private val temperatureConfigs: MutableList<TemperatureConfig> = mutableListOf()
     private val temperatureConfigRepository by lazy { TemperatureConfigRepository(context) }
@@ -71,7 +71,7 @@ class TemperatureConfigAdapter(private val context: Context, private val fragmen
             view.editTemperatureConfigButton.setOnClickListener {
                 val intent = DetailActivity.newIntent(context)
                 intent.putExtra(DetailActivity.ARG_TEMPERATURE_CONFIG, temperatureConfig)
-                fragment.startActivityForResult(intent, ListFragment.REQ_TEMPERATURE_CONFIG_EDIT)
+                fragment.startActivityForResult(intent, MainFragment.REQ_TEMPERATURE_CONFIG_EDIT)
             }
         }
     }

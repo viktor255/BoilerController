@@ -1,4 +1,4 @@
-package cz.muni.fi.pv239.boilercontroller.ui.list
+package cz.muni.fi.pv239.boilercontroller.ui.main
 
 
 import android.content.Context
@@ -11,13 +11,12 @@ import android.view.MenuItem
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.ui.login.LoginActivity
 import cz.muni.fi.pv239.boilercontroller.ui.settings.SettingsActivity
-import cz.muni.fi.pv239.boilercontroller.ui.splash.SplashActivity
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 
-class ListActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     companion object {
-        fun newIntent(context: Context) = Intent(context, ListActivity::class.java)
+        fun newIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
     private val prefManager: PrefManager? by lazy { PrefManager(this) }
@@ -33,7 +32,7 @@ class ListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_single_container)
 
         if (savedInstanceState == null) {
-            val fragment = ListFragment()
+            val fragment = MainFragment(this)
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit()

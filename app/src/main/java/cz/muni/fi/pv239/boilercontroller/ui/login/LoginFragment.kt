@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
-import cz.muni.fi.pv239.boilercontroller.ui.list.ListActivity
+import cz.muni.fi.pv239.boilercontroller.ui.main.MainActivity
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.view.*
@@ -24,7 +24,7 @@ class LoginFragment(context: Context?) : Fragment() {
                 prefManager?.token = user.token
                 prefManager?.email = user.email
                 prefManager?.password = password
-                startActivity(context?.let { context -> ListActivity.newIntent(context) })
+                startActivity(context?.let { context -> MainActivity.newIntent(context) })
             }
         }
     }
