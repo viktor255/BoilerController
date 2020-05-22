@@ -1,4 +1,4 @@
-package cz.muni.fi.pv239.boilercontroller.ui.main
+package cz.muni.fi.pv239.boilercontroller.ui.list
 
 import android.app.Activity
 import android.content.Intent

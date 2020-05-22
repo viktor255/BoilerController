@@ -14,8 +14,10 @@
 
         <activity android:name=".ui.detail.DetailActivity" />
         <activity android:name=".ui.settings.SettingsActivity" />
+        <activity android:name="cz.muni.fi.pv239.boilercontroller.ui.list.ListActivity" />
 
-        <activity android:name="cz.muni.fi.pv239.boilercontroller.ui.main.MainActivity">
+        <activity android:name="cz.muni.fi.pv239.boilercontroller.ui.splash.SplashActivity"
+            android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

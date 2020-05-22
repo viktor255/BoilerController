@@ -1,4 +1,4 @@
-package cz.muni.fi.pv239.boilercontroller.ui.main
+package cz.muni.fi.pv239.boilercontroller.ui.list
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,7 +9,6 @@ import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.model.TemperatureConfig
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
 import cz.muni.fi.pv239.boilercontroller.ui.detail.DetailActivity
-import kotlinx.android.synthetic.main.fragment_list.view.*
 import kotlinx.android.synthetic.main.item_temperature_config.view.*
 
 class TemperatureConfigAdapter(private val context: Context, private val fragment: ListFragment): RecyclerView.Adapter<TemperatureConfigAdapter.TemperatureConfigViewHolder>() {

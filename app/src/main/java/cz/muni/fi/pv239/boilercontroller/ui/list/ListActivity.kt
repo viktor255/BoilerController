@@ -1,5 +1,7 @@
-package cz.muni.fi.pv239.boilercontroller.ui.main
+package cz.muni.fi.pv239.boilercontroller.ui.list
 
+
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,14 +9,13 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import cz.muni.fi.pv239.boilercontroller.R
-import cz.muni.fi.pv239.boilercontroller.ui.detail.DetailActivity
 import cz.muni.fi.pv239.boilercontroller.ui.settings.SettingsActivity
-import cz.muni.fi.pv239.boilercontroller.ui.settings.SettingsFragment
-import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 
-class MainActivity : AppCompatActivity() {
+class ListActivity : AppCompatActivity() {
 
-//    private val prefManager: PrefManager? by lazy { PrefManager(applicationContext) }
+    companion object {
+        fun newIntent(context: Context) = Intent(context, ListActivity::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
