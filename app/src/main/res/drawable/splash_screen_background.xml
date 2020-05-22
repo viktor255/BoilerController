@@ -3,15 +3,13 @@
     android:opacity="opaque">
 
     <!-- The background color, preferably the same as your normal theme -->
-    <item android:drawable="@android:color/white" />
+    <item android:drawable="@color/primaryTextColor" />
 
-    <!-- Your product logo - 144dp color version of your app icon -->
-    <item>
-
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/whatshot_black_192x192" />
-    </item>
+    <item
+        android:width="150dp"
+        android:height="150dp"
+        android:drawable="@drawable/ic_whatshot_splash"
+        android:gravity="center" />
 
 
 </layer-list>

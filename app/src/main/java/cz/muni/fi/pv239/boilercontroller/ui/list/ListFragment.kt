@@ -47,17 +47,17 @@ class ListFragment : Fragment() {
 
             getBoostConfig()
 
-            Timer().schedule(object : TimerTask() {
-                override fun run() {
-                    getTemperatureConfigurations()
-                }
-            }, 0, 10000)
-
-            Timer().schedule(object : TimerTask() {
-                override fun run() {
-                    updateStatusBar()
-                }
-            }, 3000, 1000)
+//            Timer().schedule(object : TimerTask() {
+//                override fun run() {
+//                    getTemperatureConfigurations()
+//                }
+//            }, 0, 10000)
+//
+//            Timer().schedule(object : TimerTask() {
+//                override fun run() {
+//                    updateStatusBar()
+//                }
+//            }, 3000, 1000)
 
 
             add_button.setOnClickListener {
