@@ -47,12 +47,8 @@ class MainFragment(context: Context) : Fragment() {
             recycler_view.layoutManager = LinearLayoutManager(context)
 
             getBoostConfig()
-
-            Timer().schedule(object : TimerTask() {
-                override fun run() {
-                    getTemperatureConfigurations()
-                }
-            }, 0, 10000)
+            getAllTemperatureConfigs()
+            setUpdateCurrentTemperatureAndBoostTimer()
 
             Timer().schedule(object : TimerTask() {
                 override fun run() {
@@ -105,6 +101,14 @@ class MainFragment(context: Context) : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setUpdateCurrentTemperatureAndBoostTimer() {
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                getCurrentTemperatureAndBoost()
+            }
+        }, 0, 10000)
     }
 
     private fun addBoost() {
@@ -175,39 +179,40 @@ class MainFragment(context: Context) : Fragment() {
         }
     }
 
-    private fun getTemperatureConfigurations() {
+    private fun getAllTemperatureConfigs() {
         temperatureConfigRepository.getAllTemperatureConfigs { temperatureConfigs ->
-            temperatureConfigRepository.getBoost { boost ->
-                temperatureConfigRepository.getCurrentTemperatureConfig { temperatureConfig ->
-                    //  Current
-                    temperatureConfig?.let {
-                        currentTemperatureConfigStatus = it
-                        currentTempValue.text = it.temperature.toString()
-                        lastSyncValue.text = it.time.toPresentableDate()
-                    }
+            temperatureConfigs?.let { it ->
+                adapter.submitList(it.sortedBy { it.time })
+                currentTemperatureConfigs = it
+                recycler_view.adapter = adapter
+            }
+        }
+    }
 
-                    // temperatureConfigs
-                    temperatureConfigs?.let { temperatureConfigs ->
-                        adapter.submitList(temperatureConfigs.sortedBy { it.time })
-                        currentTemperatureConfigs = temperatureConfigs
-                        recycler_view.adapter = adapter
-
-                        // Boost
-                        boost?.let { boost ->
-                            boostLayout.visibility = View.VISIBLE
-                            boostActiveTill.text = (boost.time + boost.duration * 60000).toPresentableDate()
-                            boostAuthor.text = boost.author
-                            activeBoost = boost
-                        }
-                        if (boost == null) {
-                            boostActiveTill.text = ""
-                            boostAuthor.text = ""
-                            boostLayout.visibility = View.GONE
-                            activeBoost = boost
-                        }
-                        desiredTempValue.text = getDesiredTemperature().toString()
-                    }
+    private fun getCurrentTemperatureAndBoost() {
+        temperatureConfigRepository.getBoost { boost ->
+            temperatureConfigRepository.getCurrentTemperatureConfig { temperatureConfig ->
+                //  Current
+                temperatureConfig?.let {
+                    currentTemperatureConfigStatus = it
+                    currentTempValue.text = it.temperature.toString()
+                    lastSyncValue.text = it.time.toPresentableDate()
                 }
+
+                // Boost
+                boost?.let { boost ->
+                    boostLayout.visibility = View.VISIBLE
+                    boostActiveTill.text = (boost.time + boost.duration * 60000).toPresentableDate()
+                    boostAuthor.text = boost.author
+                    activeBoost = boost
+                }
+                if (boost == null) {
+                    boostActiveTill.text = ""
+                    boostAuthor.text = ""
+                    boostLayout.visibility = View.GONE
+                    activeBoost = boost
+                }
+                desiredTempValue.text = getDesiredTemperature().toString()
             }
         }
     }
