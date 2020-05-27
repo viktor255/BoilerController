@@ -243,6 +243,8 @@ class TemperatureConfigRepository(context: Context) {
                 if (response.isSuccessful) {
                     val user = response.body()
                     callback.invoke(user)
+                } else {
+                    callback.invoke(null)
                 }
             }
         })

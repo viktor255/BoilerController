@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
@@ -25,6 +26,9 @@ class LoginFragment(context: Context?) : Fragment() {
                 prefManager?.email = user.email
                 prefManager?.password = password
                 startActivity(context?.let { context -> MainActivity.newIntent(context) })
+            } ?: kotlin.run {
+                val toast = Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT)
+                toast.show()
             }
         }
     }

@@ -2,6 +2,7 @@ package cz.muni.fi.pv239.boilercontroller.ui.splash
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
 import cz.muni.fi.pv239.boilercontroller.ui.main.MainActivity
@@ -34,6 +35,11 @@ class SplashActivity : AppCompatActivity() {
                         }
                     }
                     routeToAppropriatePage(true)
+                    finish()
+                } ?: kotlin.run {
+                    routeToAppropriatePage(false)
+                    val toast = Toast.makeText(applicationContext, "You are offline", Toast.LENGTH_LONG)
+                    toast.show()
                     finish()
                 }
             }
