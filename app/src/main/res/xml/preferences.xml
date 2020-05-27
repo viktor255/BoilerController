@@ -5,6 +5,7 @@
     <EditTextPreference
         android:hint="Enter number between 1-6"
         app:dialogTitle="@string/boostTemperature"
+        android:icon="@drawable/ic_whatshot_secondary_light_24dp"
         app:key="boostTemperature"
         app:title="@string/boostTemperature"
         app:useSimpleSummaryProvider="true" />
@@ -12,6 +13,7 @@
     <EditTextPreference
         app:dialogTitle="@string/minutes"
         app:key="boostDuration"
+        android:icon="@drawable/ic_timer_primary_light_24dp"
         app:title="@string/boostDuration"
         app:useSimpleSummaryProvider="true" />
 
