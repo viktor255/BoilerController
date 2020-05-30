@@ -11,6 +11,9 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.extension.toPresentableDate
 import cz.muni.fi.pv239.boilercontroller.model.Boost
@@ -18,11 +21,13 @@ import cz.muni.fi.pv239.boilercontroller.model.CurrentTemperatureConfig
 import cz.muni.fi.pv239.boilercontroller.model.TemperatureConfig
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
 import cz.muni.fi.pv239.boilercontroller.ui.detail.DetailActivity
+import cz.muni.fi.pv239.boilercontroller.util.NotificationWorker
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.fragment_list.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainFragment(context: Context? = null) : Fragment() {
@@ -130,8 +135,18 @@ class MainFragment(context: Context? = null) : Fragment() {
                 boostAuthor?.text = it.author
                 activeBoost = it
                 desiredTempValue?.text = getDesiredTemperature().toString()
+
+                setNotificationForBoostEnd(it);
             }
         }
+    }
+
+    private fun setNotificationForBoostEnd(boost: Boost) {
+        val uploadWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
+            .setInputData(workDataOf(Pair("boost-start", boost.time), Pair("boost-duration", boost.duration)))
+            .setInitialDelay(boost.duration, TimeUnit.MINUTES)
+            .build()
+        WorkManager.getInstance().enqueue(uploadWorkRequest)
     }
 
     private fun deleteBoost() {

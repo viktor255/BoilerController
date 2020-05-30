@@ -12,5 +12,7 @@
     <string name="boostTemperature">Boost temperature (1–6)</string>
     <string name="boostDuration">Boost duration (min)</string>
     <string name="minutes">Minutes</string>
+    <string name="channel_name">Normal</string>
+    <string name="channel_description">Normal notifications</string>
 
 </resources>
