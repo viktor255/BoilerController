@@ -38,7 +38,7 @@ class TemperatureConfigAdapter(private val context: Context, private val fragmen
     }
 
     fun editTemperatureConfig(temperatureConfig: TemperatureConfig) {
-        val index = temperatureConfigs.indexOfFirst{ e -> e.time == temperatureConfig.time}
+        val index = temperatureConfigs.indexOfFirst{ e -> e._id == temperatureConfig._id}
         temperatureConfigs[index] = temperatureConfig
         notifyDataSetChanged()
     }
