@@ -1,13 +1,21 @@
 package cz.muni.fi.pv239.boilercontroller.ui.splash
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.*
+import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
 import cz.muni.fi.pv239.boilercontroller.ui.main.MainActivity
 import cz.muni.fi.pv239.boilercontroller.ui.login.LoginActivity
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
+import cz.muni.fi.pv239.boilercontroller.util.SyncNotificationWorker
+import java.util.concurrent.TimeUnit
 
 class SplashActivity : AppCompatActivity() {
 
@@ -17,6 +25,9 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        createNotificationChannel()
+        setNotificationWorkerForLastSync()
+
         val email = prefManager?.email
         val password = prefManager?.password
 
@@ -54,6 +65,34 @@ class SplashActivity : AppCompatActivity() {
             startActivity(MainActivity.newIntent(this))
         } else {
             startActivity(LoginActivity.newIntent(this))
+        }
+    }
+
+    private fun setNotificationWorkerForLastSync() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val work = PeriodicWorkRequestBuilder<SyncNotificationWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
+        WorkManager.getInstance().enqueueUniquePeriodicWork("lastSyncWorker", ExistingPeriodicWorkPolicy.KEEP, work)
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.channel_name)
+            val descriptionText = getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("normal", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
