@@ -9,19 +9,19 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.extension.toPresentableDate
-import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
+import cz.muni.fi.pv239.boilercontroller.repository.WebAPIRepository
 import cz.muni.fi.pv239.boilercontroller.ui.splash.SplashActivity
 
 
 class SyncNotificationWorker(private val appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
 
-    private val temperatureConfigRepository by lazy { TemperatureConfigRepository(appContext) }
+    private val apiRepository by lazy { WebAPIRepository(appContext) }
 
     override fun doWork(): Result {
 
         val currentDate = System.currentTimeMillis()
-        temperatureConfigRepository.getCurrentTemperatureConfig { temperatureConfig ->
+        apiRepository.getCurrentTemperatureConfig { temperatureConfig ->
             temperatureConfig?.let {
                 val lastSyncValue = it.time
                 if (currentDate - lastSyncValue > 1000 * 60 * 15) {

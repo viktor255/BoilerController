@@ -7,14 +7,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cz.muni.fi.pv239.boilercontroller.R
 import cz.muni.fi.pv239.boilercontroller.model.TemperatureConfig
-import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
+import cz.muni.fi.pv239.boilercontroller.repository.WebAPIRepository
 import cz.muni.fi.pv239.boilercontroller.ui.detail.DetailActivity
 import kotlinx.android.synthetic.main.item_temperature_config.view.*
 
 class TemperatureConfigAdapter(private val context: Context, private val fragment: MainFragment): RecyclerView.Adapter<TemperatureConfigAdapter.TemperatureConfigViewHolder>() {
 
     private val temperatureConfigs: MutableList<TemperatureConfig> = mutableListOf()
-    private val temperatureConfigRepository by lazy { TemperatureConfigRepository(context) }
+    private val apiRepository by lazy { WebAPIRepository(context) }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TemperatureConfigViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_temperature_config, parent, false)
@@ -44,7 +44,7 @@ class TemperatureConfigAdapter(private val context: Context, private val fragmen
     }
 
     fun deleteTemperatureConfig(position: Int) {
-        temperatureConfigRepository.deleteConfig(temperatureConfigs[position]) { temperatureConfig ->
+        apiRepository.deleteConfig(temperatureConfigs[position]) { temperatureConfig ->
             temperatureConfig?.let {
                 temperatureConfigs.removeAt(position)
                 notifyDataSetChanged()

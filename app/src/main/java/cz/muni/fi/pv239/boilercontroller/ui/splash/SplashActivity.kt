@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.*
 import cz.muni.fi.pv239.boilercontroller.R
-import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
+import cz.muni.fi.pv239.boilercontroller.repository.WebAPIRepository
 import cz.muni.fi.pv239.boilercontroller.ui.main.MainActivity
 import cz.muni.fi.pv239.boilercontroller.ui.login.LoginActivity
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 class SplashActivity : AppCompatActivity() {
 
     private val prefManager: PrefManager? by lazy { PrefManager(this) }
-    private val temperatureConfigRepository by lazy { TemperatureConfigRepository(this) }
+    private val apiRepository by lazy { WebAPIRepository(this) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,12 +32,12 @@ class SplashActivity : AppCompatActivity() {
         val password = prefManager?.password
 
         if (email != null && password != null) {
-            temperatureConfigRepository.signIn(email, password) { user ->
+            apiRepository.signIn(email, password) { user ->
                 user?.let {
                     Log.d("USER", user.email)
                     prefManager?.token = user.token
                     prefManager?.email = user.email
-                    temperatureConfigRepository.getBoostConfig {
+                    apiRepository.getBoostConfig {
                         it?.let {
                             prefManager?.boostConfigTemperature = it.temperature
                             prefManager?.boostConfigDuration = it.duration

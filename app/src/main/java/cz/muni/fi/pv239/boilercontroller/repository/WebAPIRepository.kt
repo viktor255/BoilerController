@@ -13,7 +13,7 @@ import retrofit2.Response
 import java.time.LocalDateTime
 import java.util.*
 
-class TemperatureConfigRepository(context: Context) {
+class WebAPIRepository(context: Context) {
 
     private val temperatureWebservice by lazy { RetrofitUtil.createWebService() }
     private val prefManager: PrefManager by lazy { PrefManager(context) }

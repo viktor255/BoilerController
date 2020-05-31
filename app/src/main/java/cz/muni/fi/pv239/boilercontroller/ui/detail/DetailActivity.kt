@@ -19,7 +19,7 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_single_container)
 
-        val temperatureConfig = intent.getParcelableExtra<TemperatureConfig>(ARG_TEMPERATURE_CONFIG) ?: TemperatureConfig()
+        val temperatureConfig = intent.getParcelableExtra(ARG_TEMPERATURE_CONFIG) ?: TemperatureConfig()
 
         if (savedInstanceState == null) {
             val fragment = DetailFragment(temperatureConfig)

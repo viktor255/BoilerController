@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import cz.muni.fi.pv239.boilercontroller.R
-import cz.muni.fi.pv239.boilercontroller.repository.TemperatureConfigRepository
+import cz.muni.fi.pv239.boilercontroller.repository.WebAPIRepository
 import cz.muni.fi.pv239.boilercontroller.ui.main.MainActivity
 import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -17,10 +17,10 @@ import kotlinx.android.synthetic.main.fragment_login.view.*
 class LoginFragment(context: Context?) : Fragment() {
 
     private val prefManager: PrefManager? by lazy { context?.let { PrefManager(it) } }
-    private val temperatureConfigRepository by lazy { context?.let { TemperatureConfigRepository(it) } }
+    private val apiRepository by lazy { context?.let { WebAPIRepository(it) } }
 
     private fun signIn(email: String, password: String) {
-        temperatureConfigRepository?.signIn(email, password) { user ->
+        apiRepository?.signIn(email, password) { user ->
             user?.let {
                 prefManager?.token = user.token
                 prefManager?.email = user.email

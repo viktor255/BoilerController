@@ -29,7 +29,5 @@ class SettingsFragment : PreferenceFragmentCompat() {
         boostDuration?.setOnBindEditTextListener {
             it.inputType = InputType.TYPE_CLASS_NUMBER
         }
-
-
     }
 }

@@ -7,7 +7,7 @@ import cz.muni.fi.pv239.boilercontroller.util.PrefManager
 
 class CustomPreferenceDataStore(context: Context?) : PreferenceDataStore() {
     private lateinit var boostConfig: BoostConfig
-    private val temperatureConfigRepository by lazy { context?.let { TemperatureConfigRepository(it) } }
+    private val apiRepository by lazy { context?.let { WebAPIRepository(it) } }
     private val prefManager: PrefManager? by lazy { context?.let { PrefManager(it) } }
 
     override fun putString(key: String, value: String?) {
@@ -21,7 +21,7 @@ class CustomPreferenceDataStore(context: Context?) : PreferenceDataStore() {
                 boostConfig = boostConfig.copy(duration = value.toLong())
                 prefManager?.boostConfigDuration = value.toLong()
             }
-            temperatureConfigRepository?.updateBoostConfig(boostConfig) {
+            apiRepository?.updateBoostConfig(boostConfig) {
                 it?.let {
                     prefManager?.boostConfigTemperature = it.temperature
                     prefManager?.boostConfigDuration = it.duration
@@ -33,7 +33,7 @@ class CustomPreferenceDataStore(context: Context?) : PreferenceDataStore() {
 
     override fun getString(key: String, defValue: String?): String? {
         // Retrieve the value
-        temperatureConfigRepository?.getBoostConfig {
+        apiRepository?.getBoostConfig {
             it?.let {
                 boostConfig = BoostConfig(it._id, it.duration, it.temperature)
                 prefManager?.boostConfigTemperature = it.temperature
