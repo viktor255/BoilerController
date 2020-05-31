@@ -40,7 +40,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_delete_black_24dp" />
+            app:srcCompat="@drawable/ic_delete_black_24dp"
+            android:contentDescription="@string/delete_temperature_config" />
 
         <ImageButton
             android:id="@+id/editTemperatureConfigButton"
@@ -51,7 +52,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/deleteTemperatureConfigButton"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_edit_black_24dp" />
+            app:srcCompat="@drawable/ic_edit_black_24dp"
+            android:contentDescription="@string/edit_temperature_config" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

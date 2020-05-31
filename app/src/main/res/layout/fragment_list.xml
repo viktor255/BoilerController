@@ -57,7 +57,7 @@
                 style="@style/textColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Current Temp"
+                android:text="@string/current_temperature"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -89,7 +89,7 @@
                 android:id="@+id/desiredTempTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Desired temp"
+                android:text="@string/desired_temperature"
                 android:textSize="14sp"
                 style="@style/textColor"
                 app:layout_constraintStart_toStartOf="parent"
@@ -120,7 +120,7 @@
                 style="@style/textColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Last sync"
+                android:text="@string/last_synchronization"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -154,7 +154,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Boost Active till:"
+            android:text="@string/boost_active_till"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -181,7 +181,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_delete_black_24dp" />
+            app:srcCompat="@drawable/ic_delete_black_24dp"
+            android:contentDescription="@string/delete_boost" />
 
         <TextView
             android:id="@+id/boostAuthor"
@@ -195,7 +196,8 @@
             app:layout_constraintEnd_toEndOf="@+id/boostActiveTill"
             app:layout_constraintStart_toStartOf="@+id/boostActiveTill"
             app:layout_constraintTop_toBottomOf="@+id/boostActiveTill"
-            tools:text="viktor.lehotsky@gmail.com" />
+            tools:text="viktor.lehotsky@gmail.com"
+            tools:ignore="SmallSp" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

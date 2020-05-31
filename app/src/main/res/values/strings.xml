@@ -14,5 +14,13 @@
     <string name="minutes">Minutes</string>
     <string name="channel_name">Normal</string>
     <string name="channel_description">Normal notifications</string>
+    <string name="desired_temperature">Desired Temp</string>
+    <string name="current_temperature">Current Temp</string>
+    <string name="last_synchronization">Last Sync</string>
+    <string name="boost_active_till">Boost active till:</string>
+    <string name="delete_boost">delete boost</string>
+    <string name="email_address">Email address</string>
+    <string name="delete_temperature_config">Delete temperature config</string>
+    <string name="edit_temperature_config">Edit temperature config</string>
 
 </resources>
